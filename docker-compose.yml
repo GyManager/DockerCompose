@@ -1,0 +1,38 @@
+services:
+  web:
+    container_name: react-app
+    build: ./FrontEndSource/
+    environment:
+      REACT_APP_API_URL: https://localhost:8081/api
+      REACT_APP_LOGICAL_DELETE: true
+    ports:
+      - "80:80"
+    restart: unless-stopped
+  java-api:
+    container_name: java-api
+    build: ./BackEndSource/
+    environment:
+      claim-name: permisos
+      access-token.expiration: 3600000
+      access-token.header: access_token
+      refresh-token.expiration: 604800000
+      refresh-token.header: refresh_token
+      login-path: /api/auth
+      refresh-path: /api/auth/refresh
+      server.error.include-binding-errors: always
+      server.error.include-message: always
+      server.port: 8081
+      spring.application.name: GyManager
+      spring.datasource.hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+      spring.datasource.maxActive: 5
+      spring.datasource.platform: postgres
+      spring.jpa.properties.hibernate.default_schema: develop
+      logical-delete: true
+      spring.jpa.properties.hibernate.format_sql: true
+      spring.jpa.show-sql: true
+      hibernate.show-sql: true
+    env_file:
+      - java-api.prod.env
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
